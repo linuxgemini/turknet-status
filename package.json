@@ -1,0 +1,31 @@
+{
+  "name": "turknet-status",
+  "version": "0.0.1",
+  "description": "Wrapper for the status API for the ISP Turk.net.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linuxgemini/turknet-status.git"
+  },
+  "keywords": [
+    "turk.net",
+    "status",
+    "türk.net",
+    "türk.net durum"
+  ],
+  "author": "linuxgemini",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/linuxgemini/turknet-status/issues"
+  },
+  "homepage": "https://github.com/linuxgemini/turknet-status#readme",
+  "dependencies": {
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
+    "moment": "^2.23.0",
+    "moment-timezone": "^0.5.23"
+  },
+  "main": "./src/index"
+}
