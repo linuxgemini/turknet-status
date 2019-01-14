@@ -18,7 +18,7 @@ Installation
 -----------
 It is an API what do you expect.
 
-    ~/project/$ npm install --save github:linuxgemini/turknet-status
+    ~/project/$ npm install --save turknet-status
 
 On your project:
 
