@@ -4,8 +4,45 @@ const moment = require("moment");
 
 class FutureOps {
     constructor(client) {
-        this.client = client;
+        this.__client = client;
     }
+
+    /**
+     * @typedef {Object} rawOutageObject
+     * @property {String} Aciklama
+     * @property {String} BaslangicSaati
+     * @property {String} BaslangicTarihi
+     * @property {String} BitisSaati
+     * @property {String} BitisTarihi
+     * @property {String} Calisma
+     * @property {String} CalismaKategorisi
+     * @property {String} HOSTNAME
+     * @property {String} Il
+     * @property {String} Ilce
+     * @property {String} KesintiSuresi
+     * @property {String} POP
+     * @property {String} SSG
+     */
+
+    /**
+     * @typedef {Object} OutageObject
+     * @property {String} description
+     * @property {Date} startDate
+     * @property {Date} endDate
+     * @property {WorkObject} work
+     */
+
+    /**
+     * @typedef {Object} WorkObject
+     * @property {String} type
+     * @property {String} outageTime
+     * @property {String} popExchange
+     * @property {String} affectedSSG
+     * @property {String} affectedHost
+     * @property {String} province
+     * @property {String} city
+     * @property {String} rawData
+     */
 
     /**
      * Merge ASP.NET date and classic HH:MM:SS time together.
@@ -22,13 +59,22 @@ class FutureOps {
         return parsedDate.hour(parseInt(splitTime[0])).minute(parseInt(splitTime[1])).second(parseInt(splitTime[2])).toDate();
     }
 
+    /**
+     * Converts outage object to a readable one.
+     * @param {rawOutageObject} outageData 
+     * @returns {OutageObject}
+     */
     __convertOutageObject(outageData) {
         try {
+            /**
+             * @type {OutageObject}
+             */
             let ret = {};
 
             let startDate = this.__mergeDateTime(outageData.BaslangicTarihi, outageData.BaslangicSaati);
             let endDate = this.__mergeDateTime(outageData.BitisTarihi, outageData.BitisSaati);
-    
+            
+            // we don't like CRLF here
             ret.description = outageData.Aciklama.replace(/\r\n/g, "\n");
             ret.startDate = startDate;
             ret.endDate = endDate;
@@ -42,16 +88,20 @@ class FutureOps {
                 city: outageData.Ilce,
                 rawData: outageData.Calisma
             };
+    
             return ret;
         } catch (error) {
             return null;
         }
     }
 
+    /**
+     * @returns {OutageObject}
+     */
     getLatestOperation() {
         return new Promise(async (resolve, reject) => {
             try {
-                let raw = await this.client.__request();
+                let raw = await this.__client.__request();
                 let data = raw.Result.PlannedOperationInfoList[0];
 
                 let res = this.__convertOutageObject(data);
@@ -64,10 +114,13 @@ class FutureOps {
         });
     }
 
+    /**
+     * @returns {Promise<{OutageObject}>}
+     */
     getAllOperations() {
         return new Promise(async (resolve, reject) => {
             try {
-                let raw = await this.client.__request();
+                let raw = await this.__client.__request();
                 let datas = raw.Result.PlannedOperationInfoList;
 
                 let resp = [];

@@ -4,31 +4,70 @@ const moment = require("moment-timezone");
 
 class POPinfo {
     constructor(client) {
-        this.client = client;
+        this.__client = client;
     }
 
+    /**
+     * @typedef {Object} PoPObject 
+     * @property {InnerPoPObject} trabzon
+     * @property {InnerPoPObject} sivas
+     * @property {InnerPoPObject} mugla
+     * @property {InnerPoPObject} mersin
+     * @property {InnerPoPObject} mednautilus
+     * @property {InnerPoPObject} manisa
+     * @property {InnerPoPObject} konya
+     * @property {InnerPoPObject} kayseri
+     * @property {InnerPoPObject} gayrettepe
+     * @property {InnerPoPObject} eskisehir
+     * @property {InnerPoPObject} erzurum
+     * @property {InnerPoPObject} diyarbakir
+     * @property {InnerPoPObject} denizli
+     * @property {InnerPoPObject} balikesir
+     * @property {InnerPoPObject} aydin
+     * @property {InnerPoPObject} antalya
+     * @property {InnerPoPObject} adana
+     */
+
+    /**
+     * @typedef {Object} InnerPoPObject 
+     * @property {Number} facebook 
+     * @property {Number} google
+     * @property {Number|null} netflix
+     * @property {Number} spotify
+     * @property {Number} twitter
+     * @property {Number} youtube
+     * @property {Number} localMachine
+     * @property {Date} lastUpdated
+     * @property {Date} lastPinged
+     */
+
+    /**
+     * Converts date string to date.
+     * @param {String} dateData 
+     * @returns {Date}
+     */
     __parseDate(dateData) {
-        let dateArr = dateData.split(" ");
-
-        let dateProc = dateArr[0].split(".");
-        for (const key in dateProc) {
-            if (dateProc[key].length === 1) dateProc[key] = `0${dateProc[key]}`;
-        }
-
-        let date = dateProc.reverse().join("-");
-        let time = dateArr[1];
-        return moment.tz(`${date} ${time}`, "Europe/Istanbul").toDate();
+        return moment.tz(dateData, "DD.MM.YYYY HH:mm:ss", "Europe/Istanbul").toDate();
     }
 
+    /**
+     * Converts ping string to number.
+     * @param {String} pingStr 
+     * @returns {Number}
+     */
     __parsePing(pingStr) {
         if (pingStr === "") return null;
         return parseFloat(pingStr.replace(/,/g, "."));
     }
 
+    /**
+     * Gets the ping values from PoP exchanges.
+     * @returns {Promise<PoPObject>}
+     */
     getPingData() {
         return new Promise(async (resolve, reject) => {
             try {
-                let raw = await this.client.__request();
+                let raw = await this.__client.__request();
                 let data = raw.Result.PingDurationInfoList;
                 let res = {};
                 for (const popObj of data) {

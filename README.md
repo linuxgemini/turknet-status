@@ -27,7 +27,36 @@ const Turknet = require("turknet-status");
 const turknet = new Turknet();
 ```
 
-Functions
+Insights
 -----------
 
-*Coming soon.*
+All objects return a promise. Using async/await is recommended.
+
+Objects
+-----------
+
+### turknet.monthlySpeedtest
+
+#### getLastMonthResults()
+
+Gets the previous month's speedtest results.
+
+### turknet.futureOps
+
+#### getLatestOperation()
+
+Get the closest maintenance operation.
+
+#### getAllOperations()
+
+Get all maintenance operations.
+
+### turknet.exchangeInfo
+
+#### getPingData()
+
+Gets a list of pings to popular services from PoP exchanges.
+
+### turknet.telekomSSGProblems
+
+### turknet.yapaFiberProblems

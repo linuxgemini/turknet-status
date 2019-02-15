@@ -35,7 +35,7 @@ class Turknet {
         this.monthlySpeedtest = new MonthlySpeedtest(this);
         this.futureOps = new FutureOps(this);
         this.exchangeInfo = new POPinfo(this);
-        this.telecomSSGProblems = new TelekomSSGProblems(this);
+        this.telekomSSGProblems = new TelekomSSGProblems(this);
         this.yapaFiberProblems = new YAPAFiberProblems(this);
     }
 

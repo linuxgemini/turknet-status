@@ -2,7 +2,7 @@
 
 class YAPAFiberProblems {
     constructor(client) {
-        this.client = client;
+        this.__client = client;
     }
 }
 

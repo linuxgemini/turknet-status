@@ -2,7 +2,7 @@
 
 class TelekomSSGProblems {
     constructor(client) {
-        this.client = client;
+        this.__client = client;
     }
 }
 
