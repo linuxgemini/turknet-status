@@ -1,6 +1,6 @@
 "use strict";
 
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 class FutureOps {
     constructor(client) {
@@ -53,7 +53,7 @@ class FutureOps {
     __mergeDateTime(date, time) {
         if (!date || !time) throw new Error("Missing input.");
         if (!time.includes(":")) throw new Error("Invalid time object.");
-        let parsedDate = moment(date);
+        let parsedDate = moment.tz(date, "Europe/Istanbul");
         let splitTime = time.split(":");
         if (splitTime.length !== 3) throw new Error("Missing time object.");
         return parsedDate.hour(parseInt(splitTime[0])).minute(parseInt(splitTime[1])).second(parseInt(splitTime[2])).toDate();
