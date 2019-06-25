@@ -24,7 +24,7 @@ On your project:
 
 ```js
 const Turknet = require("turknet-status");
-const turknet = new Turknet();
+const turknet = new Turknet.StatusClient();
 ```
 
 Insights

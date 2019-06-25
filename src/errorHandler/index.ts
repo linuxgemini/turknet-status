@@ -1,7 +1,7 @@
-"use strict";
-
 class turknetError extends Error {
-    constructor(errcode = "0000", errmessage = "Unknown error, contact package writer @linuxgemini", ...params) {
+    code: string;
+    date: Date;
+    constructor(errcode = "0000", errmessage = "Unknown error, contact package writer @linuxgemini", ...params: any) {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
         super(...params);
 
@@ -18,4 +18,4 @@ class turknetError extends Error {
     }
 }
 
-module.exports = turknetError;
+export default turknetError;
