@@ -20,7 +20,7 @@ class YAPAFiberProblems {
         return new Promise(async (resolve, reject) => {
             try {
                 let raw = await this.__client.__request();
-                let data = raw.Result.TelecomSsgFaultInfoList;
+                let data = raw.Result.YapaFiberFaultInFoList;
                 let res = [];
 
                 for (const faultObj of data) {
