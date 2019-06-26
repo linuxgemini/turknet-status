@@ -1,7 +1,7 @@
 import Turknet from "../index";
 import moment from "moment-timezone"
 
-interface FaultObject {
+interface TelekomFaultObject {
     outageStatus: string;
     lastUpdated: Date;
     province: string;
@@ -16,7 +16,7 @@ class TelekomSSGProblems {
         this.__client = client;
     }
 
-    getAll(): Promise<FaultObject[]> {
+    getAll(): Promise<TelekomFaultObject[]> {
         return new Promise(async (resolve, reject) => {
             try {
                 let raw = await this.__client.__request();
@@ -24,7 +24,7 @@ class TelekomSSGProblems {
                 let res = [];
 
                 for (const faultObj of data) {
-                    let ob: FaultObject = {
+                    let ob: TelekomFaultObject = {
                         outageStatus: faultObj.ArizaDurumu,
                         lastUpdated: moment.tz(faultObj.GuncellenmeTarihi, "Europe/Istanbul").toDate(),
                         province: faultObj.Il,
