@@ -81,7 +81,12 @@ interface TelecomSsgFaultInfoListObject {
 }
 
 interface YapaFiberFaultInFoListObject {
-    
+    ArizaDurumu: string;
+    GirisSaati: string;
+    GuncellenmeTarihi: string;
+    Il: string;
+    Ilce: string;
+    POP: string;
 }
 
 interface ResultObject {
