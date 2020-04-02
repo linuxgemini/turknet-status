@@ -6,7 +6,7 @@ interface TelekomFaultObject {
     lastUpdated: Date;
     province: string;
     city: string;
-    PoPExchange: string;
+    popExchange: string;
 }
 
 class TelekomSSGProblems {
@@ -29,7 +29,7 @@ class TelekomSSGProblems {
                         lastUpdated: moment.tz(faultObj.GuncellenmeTarihi, "Europe/Istanbul").toDate(),
                         province: faultObj.Il,
                         city: faultObj.Ilce,
-                        PoPExchange: faultObj.POP
+                        popExchange: faultObj.POP
                     };
                     res.push(ob);
                 }

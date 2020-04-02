@@ -1,3 +1,4 @@
+// tslint:disable-next-line: variable-name
 class turknetError extends Error {
     code: string;
     date: Date;

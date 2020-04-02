@@ -11,6 +11,7 @@ interface YAPAFaultObject {
 }
 
 class YAPAFiberProblems {
+    // tslint:disable-next-line: variable-name
     private __client: Turknet;
     constructor(client: Turknet) {
         this.__client = client;

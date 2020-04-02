@@ -7,11 +7,11 @@
 /*
  * Initalise parsers for each type
  */
-import MonthlySpeedtest from "./MonthlySpeedtest/index";
-import FutureOps from "./FutureOps/index";
-import POPinfo from "./POPinfo/index";
-import TelekomSSGProblems from "./TelekomSSGProblems/index";
-import YAPAFiberProblems from "./YAPAFiberProblems/index";
+import monthlySpeedtest from "./monthlySpeedtest/index";
+import futureOps from "./futureOps/index";
+import exchangeInfo from "./exchangeInfo/index";
+import telekomSSGProblems from "./telekomSSGProblems/index";
+import yapaFiberProblems from "./yapaFiberProblems/index";
 
 /*
  * Local error handler
@@ -19,9 +19,9 @@ import YAPAFiberProblems from "./YAPAFiberProblems/index";
 import errorHandler from "./errorHandler/index";
 
 /*
- * Initalise the request-promise-native package
+ * Initalise the node-fetch package
  */
-import request from "request-promise-native";
+import fetch from "node-fetch";
 
 interface ServiceResultObject {
     Code: number;
@@ -103,42 +103,42 @@ interface RawDataObject {
 }
 
 class Turknet {
+    // tslint:disable-next-line: variable-name
     private __endpoint: string;
     public errorHandler: typeof errorHandler;
 
-    public monthlySpeedtest: MonthlySpeedtest;
-    public futureOps: FutureOps;
-    public exchangeInfo: POPinfo;
-    public telekomSSGProblems: TelekomSSGProblems;
-    public yapaFiberProblems: YAPAFiberProblems;
+    public monthlySpeedtest: monthlySpeedtest;
+    public futureOps: futureOps;
+    public exchangeInfo: exchangeInfo;
+    public telekomSSGProblems: telekomSSGProblems;
+    public yapaFiberProblems: yapaFiberProblems;
     constructor() {
         this.__endpoint = "https://turk.net/service/InformationServ.svc/GetNetworkOperationInfo"; // Endpoint is used in https://turk.net/turknet-karnesi
 
         this.errorHandler = errorHandler; // errorHandler extends the Error class so we shouldn't ever call a new one.
 
         // We call each parser with this main class
-        this.monthlySpeedtest = new MonthlySpeedtest(this);
-        this.futureOps = new FutureOps(this);
-        this.exchangeInfo = new POPinfo(this);
-        this.telekomSSGProblems = new TelekomSSGProblems(this);
-        this.yapaFiberProblems = new YAPAFiberProblems(this);
+        this.monthlySpeedtest = new monthlySpeedtest(this);
+        this.futureOps = new futureOps(this);
+        this.exchangeInfo = new exchangeInfo(this);
+        this.telekomSSGProblems = new telekomSSGProblems(this);
+        this.yapaFiberProblems = new yapaFiberProblems(this);
     }
 
     private get __generateConfig() {
         return {
             method: "PUT",
-            url: this.__endpoint,
             headers: {
                 "cache-control": "no-cache"
-            },
-            json: true
+            }
         };
     }
 
     __request(): Promise<RawDataObject> {
         return new Promise(async (resolve, reject) => {
             try {
-                let req: RawDataObject = await request(this.__generateConfig); // tslint:disable-line
+                let fetchreq = await fetch(this.__endpoint, this.__generateConfig); // tslint:disable-line
+                let req: RawDataObject = await fetchreq.json();
                 if (req.ServiceResult.Code !== 0) throw new this.errorHandler(req.ServiceResult.Code.toString(), req.ServiceResult.Message);
                 return resolve(req);
             } catch (error) {

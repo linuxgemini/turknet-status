@@ -33,7 +33,7 @@ interface PoPObject {
     adana: InnerPoPObject;
 }
 
-class POPinfo {
+class ExchangeInfo {
     // tslint:disable-next-line: variable-name
     private __client: Turknet;
     constructor(client: Turknet) {
@@ -76,4 +76,4 @@ class POPinfo {
     }
 }
 
-export default POPinfo;
+export default ExchangeInfo;
