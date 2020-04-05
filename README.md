@@ -9,8 +9,7 @@ Requirements
 Dependecies
 -----------
 
-* [request](https://www.npmjs.com/package/request)
-* [request-promise-native](https://www.npmjs.com/package/request-promise-native)
+* [node-fetch](https://www.npmjs.com/package/node-fetch)
 * [moment](https://www.npmjs.com/package/moment)
 * [moment-timezone](https://www.npmjs.com/package/moment-timezone)
 
