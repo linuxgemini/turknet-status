@@ -1,4 +1,5 @@
-import Turknet from ".."
+import {Turknet} from "../../Turknet";
+import * as GlobalTypes from "../../dataTypes";
 import moment from "moment-timezone";
 
 interface RawOutageObject {
@@ -17,7 +18,7 @@ interface RawOutageObject {
     SSG: string;
 }
 
-interface WorkObject {
+export interface WorkObject {
     type: string;
     outageTime: string;
     popExchange: string;
@@ -28,20 +29,20 @@ interface WorkObject {
     rawData: string;
 }
 
-interface OutageObject {
+export interface OutageObject {
     description: string;
     startDate: Date;
     endDate: Date;
     work: WorkObject;
 }
 
-class FutureOps {
-    // tslint:disable-next-line: variable-name
+export class FutureOps {
+    /** @internal @ignore */
     private __client: Turknet;
+
     constructor(client: Turknet) {
         this.__client = client;
     }
-
 
     private __mergeDateTime(date: string, time: string) {
         if (!time.includes(":")) throw new Error("Invalid time object.");
@@ -79,43 +80,37 @@ class FutureOps {
         }
     }
 
-    getLatestOperation(): Promise<OutageObject> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let raw = await this.__client.__request();
-                let data = raw.Result.PlannedOperationInfoList[0];
+    async getLatestOperation(): Promise<OutageObject> {
+        try {
+            let raw = await this.__client.__request() as GlobalTypes.ResultObject;
+            let data = raw.PlannedOperationInfoList[0];
 
-                let res = this.__convertOutageObject(data);
-                if (!res) throw new Error("Got empty data.");
+            let res = this.__convertOutageObject(data);
+            if (!res) throw new Error("Got empty data.");
 
-                return resolve(res);
-            } catch (error) {
-                return reject(error);
-            }
-        });
+            return res;
+        } catch (error) {
+            return error;
+        }
     }
 
 
-    getAllOperations(): Promise<OutageObject[]> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let raw = await this.__client.__request();
-                let datas = raw.Result.PlannedOperationInfoList;
+    async getAllOperations(): Promise<OutageObject[]> {
+        try {
+            let raw = await this.__client.__request() as GlobalTypes.ResultObject;
+            let datas = raw.PlannedOperationInfoList;
 
-                let resp = [];
+            let resp = [];
 
-                for (const outageObj of datas) {
-                    let d = this.__convertOutageObject(outageObj)
-                    if (d === null) continue;
-                    resp.push(d);
-                }
-
-                return resolve(resp);
-            } catch (error) {
-                return reject(error);
+            for (const outageObj of datas) {
+                let d = this.__convertOutageObject(outageObj)
+                if (d === null) continue;
+                resp.push(d);
             }
-        });
+
+            return resp;
+        } catch (error) {
+            return error;
+        }
     }
 }
-
-export default FutureOps;

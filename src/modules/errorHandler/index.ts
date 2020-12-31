@@ -1,5 +1,4 @@
-// tslint:disable-next-line: variable-name
-class turknetError extends Error {
+export class turknetError extends Error {
     code: string;
     date: Date;
     constructor(errcode = "0000", errmessage = "Unknown error, contact package writer @linuxgemini", ...params: any) {
@@ -18,5 +17,3 @@ class turknetError extends Error {
         this.date = new Date();
     }
 }
-
-export default turknetError;

@@ -1,0 +1,18 @@
+{
+    "entryPoints": [
+        "./src/"
+    ],
+    "exclude": [
+        "./src/modules/errorHandler/*.ts",
+        "./src/dataTypes.ts",
+        "./src/index.ts"
+    ],
+    "out": "docs/",
+    "excludeProtected": true,
+    "excludePrivate": true,
+    "excludeTags": true,
+    "readme": "none",
+    "externalPattern": [
+        "./src/modules/**/*.ts"
+    ]
+  }
