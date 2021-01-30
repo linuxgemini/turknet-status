@@ -1,6 +1,8 @@
 import {Turknet} from "../../Turknet";
 import * as GlobalTypes from "../../dataTypes";
-import moment from "moment-timezone";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 export interface TelekomFaultObject {
     outageStatus: string;
@@ -18,6 +20,10 @@ export class TelekomSSGProblems {
         this.__client = client;
     }
 
+    private __stripASPDateString(datestr: string): number {
+        return parseInt(datestr.replace(/^\/Date\(|\+\d{4}\)\/$/, ""), 10);
+    }
+
     async getAll(): Promise<TelekomFaultObject[]> {
         try {
             let raw = await this.__client.__request() as GlobalTypes.ResultObject;
@@ -27,7 +33,7 @@ export class TelekomSSGProblems {
             for (const faultObj of data) {
                 let ob: TelekomFaultObject = {
                     outageStatus: faultObj.ArizaDurumu,
-                    lastUpdated: moment.tz(faultObj.GuncellenmeTarihi, "Europe/Istanbul").toDate(),
+                    lastUpdated: dayjs(this.__stripASPDateString(faultObj.GuncellenmeTarihi)).utcOffset(3, true).toDate(),
                     province: faultObj.Il,
                     city: faultObj.Ilce,
                     popExchange: faultObj.POP

@@ -52,14 +52,12 @@
     ],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     "typeRoots": [
       "./node_modules/@types/",
-      "./node_modules/moment/",
-      "./node_modules/moment-timezone/"
+      "./node_modules/dayjs/"
     ],                       /* List of folders to include type definitions from. */
     "types": [
       "node",
       "node-fetch",
-      "moment",
-      "moment-timezone"
+      "dayjs"
     ],                           /* Type declaration files to be included in compilation. */
     "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
     "resolveJsonModule": true,

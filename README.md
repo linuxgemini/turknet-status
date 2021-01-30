@@ -10,8 +10,7 @@ Dependecies
 -----------
 
 * [node-fetch](https://www.npmjs.com/package/node-fetch)
-* [moment](https://www.npmjs.com/package/moment)
-* [moment-timezone](https://www.npmjs.com/package/moment-timezone)
+* [dayjs](https://www.npmjs.com/package/dayjs)
 
 Installation
 -----------

@@ -1,6 +1,8 @@
 import {Turknet} from "../../Turknet";
 import * as GlobalTypes from "../../dataTypes";
-import moment from "moment-timezone"
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 export interface YAPAFaultObject {
     outageStatus: string;
@@ -18,7 +20,11 @@ export class YAPAFiberProblems {
     constructor(client: Turknet) {
         this.__client = client;
     }
-    
+
+    private __stripASPDateString(datestr: string): number {
+        return parseInt(datestr.replace(/^\/Date\(|\+\d{4}\)\/$/, ""), 10);
+    }
+
     async getAll(): Promise<YAPAFaultObject[]> {
         try {
             let raw = await this.__client.__request() as GlobalTypes.ResultObject;
@@ -28,8 +34,8 @@ export class YAPAFiberProblems {
             for (const faultObj of data) {
                 let ob: YAPAFaultObject = {
                     outageStatus: faultObj.ArizaDurumu,
-                    entryDate: moment.tz(faultObj.GirisSaati, "Europe/Istanbul").toDate(),
-                    lastUpdated: moment.tz(faultObj.GuncellenmeTarihi, "Europe/Istanbul").toDate(),
+                    entryDate: dayjs(this.__stripASPDateString(faultObj.GirisSaati)).utcOffset(3, true).toDate(),
+                    lastUpdated: dayjs(this.__stripASPDateString(faultObj.GuncellenmeTarihi)).utcOffset(3, true).toDate(),
                     province: faultObj.Il,
                     city: faultObj.Ilce,
                     PoPExchange: faultObj.POP

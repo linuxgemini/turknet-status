@@ -1,6 +1,8 @@
 import {Turknet} from "../../Turknet";
 import * as GlobalTypes from "../../dataTypes";
-import moment from "moment-timezone";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 interface RawOutageObject {
     Aciklama: string;
@@ -44,9 +46,13 @@ export class FutureOps {
         this.__client = client;
     }
 
+    private __stripASPDateString(datestr: string): number {
+        return parseInt(datestr.replace(/^\/Date\(|\+\d{4}\)\/$/, ""), 10);
+    }
+
     private __mergeDateTime(date: string, time: string) {
         if (!time.includes(":")) throw new Error("Invalid time object.");
-        let parsedDate = moment.tz(date, "Europe/Istanbul");
+        let parsedDate = dayjs(this.__stripASPDateString(date)).utcOffset(3, true);
         let splitTime = time.split(":");
         if (splitTime.length !== 3) throw new Error("Missing time object.");
         return parsedDate.hour(parseInt(splitTime[0], undefined)).minute(parseInt(splitTime[1], undefined)).second(parseInt(splitTime[2], undefined)).toDate();
