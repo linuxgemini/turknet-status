@@ -52,7 +52,7 @@ export class FutureOps {
 
     private __mergeDateTime(date: string, time: string) {
         if (!time.includes(":")) throw new Error("Invalid time object.");
-        let parsedDate = dayjs(this.__stripASPDateString(date)).utcOffset(3, true);
+        let parsedDate = dayjs(this.__stripASPDateString(date)).utcOffset(3);
         let splitTime = time.split(":");
         if (splitTime.length !== 3) throw new Error("Missing time object.");
         return parsedDate.hour(parseInt(splitTime[0], undefined)).minute(parseInt(splitTime[1], undefined)).second(parseInt(splitTime[2], undefined)).toDate();

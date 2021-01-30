@@ -34,8 +34,8 @@ export class YAPAFiberProblems {
             for (const faultObj of data) {
                 let ob: YAPAFaultObject = {
                     outageStatus: faultObj.ArizaDurumu,
-                    entryDate: dayjs(this.__stripASPDateString(faultObj.GirisSaati)).utcOffset(3, true).toDate(),
-                    lastUpdated: dayjs(this.__stripASPDateString(faultObj.GuncellenmeTarihi)).utcOffset(3, true).toDate(),
+                    entryDate: dayjs(this.__stripASPDateString(faultObj.GirisSaati)).utcOffset(3).toDate(),
+                    lastUpdated: dayjs(this.__stripASPDateString(faultObj.GuncellenmeTarihi)).utcOffset(3).toDate(),
                     province: faultObj.Il,
                     city: faultObj.Ilce,
                     PoPExchange: faultObj.POP

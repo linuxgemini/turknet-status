@@ -33,7 +33,7 @@ export class TelekomSSGProblems {
             for (const faultObj of data) {
                 let ob: TelekomFaultObject = {
                     outageStatus: faultObj.ArizaDurumu,
-                    lastUpdated: dayjs(this.__stripASPDateString(faultObj.GuncellenmeTarihi)).utcOffset(3, true).toDate(),
+                    lastUpdated: dayjs(this.__stripASPDateString(faultObj.GuncellenmeTarihi)).utcOffset(3).toDate(),
                     province: faultObj.Il,
                     city: faultObj.Ilce,
                     popExchange: faultObj.POP
