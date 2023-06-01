@@ -95,7 +95,7 @@ export class FutureOps {
             if (!res) throw new Error("Got empty data.");
 
             return res;
-        } catch (error) {
+        } catch (error: any) {
             return error;
         }
     }
@@ -115,7 +115,7 @@ export class FutureOps {
             }
 
             return resp;
-        } catch (error) {
+        } catch (error: any) {
             return error;
         }
     }

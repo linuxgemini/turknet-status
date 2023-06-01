@@ -41,7 +41,7 @@ export class cityPingData {
             }
 
             return result;
-        } catch (error) {
+        } catch (error: any) {
             return error;
         }
     }

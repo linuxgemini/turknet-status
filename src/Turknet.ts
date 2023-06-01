@@ -26,7 +26,7 @@ import {turknetError} from "./modules/errorHandler/index";
 /*
  * Initalise the node-fetch package
  */
-import fetch from "node-fetch";
+import * as nodeFetch from "node-fetch";
 
 /*
  *  Import types
@@ -65,6 +65,31 @@ interface RequestOptionsObject {
     method: "PUT" | "GET";
     headers: RequestHeadersObject;
     body?: any;
+    timeout: number;
+}
+
+// `AbortSignal` is defined here to prevent a dependency on a particular
+// implementation like the `abort-controller` package, and to avoid requiring
+// the `dom` library in `tsconfig.json`.
+interface AbortSignal {
+    aborted: boolean;
+    reason: any;
+
+    addEventListener: (type: "abort", listener: ((this: AbortSignal, event: any) => any), options?: boolean | {
+        capture?: boolean | undefined,
+        once?: boolean | undefined,
+        passive?: boolean | undefined
+    }) => void;
+
+    removeEventListener: (type: "abort", listener: ((this: AbortSignal, event: any) => any), options?: boolean | {
+        capture?: boolean | undefined
+    }) => void;
+
+    dispatchEvent: (event: any) => boolean;
+
+    onabort: null | ((this: AbortSignal, event: any) => any);
+
+    throwIfAborted(): void;
 }
 
 export class Turknet {
@@ -103,12 +128,53 @@ export class Turknet {
     }
 
     /** @internal */
+    private __sleep(ms = 0, signal: AbortSignal) {
+        return new Promise<void>((resolve, reject) => {
+          const id = setTimeout(() => resolve(), ms);
+          signal?.addEventListener("abort", () => {
+            clearTimeout(id);
+            reject();
+          });
+        });
+    }
+
+    private async __fetch(
+        resource: nodeFetch.RequestInfo,
+        options: nodeFetch.RequestInit
+      ) {
+        const { timeout, signal, ...ropts } = options ?? {};
+      
+        const controller = new AbortController();
+        let sleepController;
+        try {
+          signal?.addEventListener("abort", () => controller.abort());
+      
+          const request = nodeFetch.default(resource, {
+            ...ropts,
+            signal: controller.signal,
+          });
+      
+          if (timeout != null) {
+            sleepController = new AbortController();
+            const aborter = this.__sleep(timeout, sleepController.signal);
+            const race = await Promise.race([aborter, request]);
+            if (race == null) controller.abort();
+          }
+      
+          return request;
+        } finally {
+          sleepController?.abort();
+        }
+      }
+
+    /** @internal */
     private __generateConfig(serverType: "main"|"latestSpeedtest"|"customerServiceReports"|"pingCategoryReport"|"pingCityReport" = "main", body?: any): any {
         let returning: RequestOptionsObject = {
             method: "PUT",
             headers: {
                 "cache-control": "no-cache",
-            }
+            },
+            timeout: 3000,
         };
 
         if (serverType === "latestSpeedtest" || serverType === "customerServiceReports" || serverType === "pingCategoryReport") returning.method = "GET";
@@ -122,28 +188,28 @@ export class Turknet {
     /** @internal */
     async __request(server: "main"|"latestSpeedtest"|"customerServiceReports"|"pingCategoryReport" = "main"): Promise<GlobalTypes.ResultObject | GlobalTypes.LatestSpeedtestObject | GlobalTypes.LatestCustomerServiceReportsObject[] | GlobalTypes.PingCategoryObject[]> {
         try {
-            let fetchreq = await fetch(this.__endpoints[server], this.__generateConfig(server)); // tslint:disable-line
+            let fetchreq = await this.__fetch(this.__endpoints[server], this.__generateConfig(server));
             let req: RawDataObject = await fetchreq.json();
             if (req.ServiceResult.Code !== 0) throw new this.errorHandler(req.ServiceResult.Code.toString(), req.ServiceResult.Message);
             let res = req.Result as GlobalTypes.ResultObject | GlobalTypes.LatestSpeedtestObject | GlobalTypes.LatestCustomerServiceReportsObject[] | GlobalTypes.PingCategoryObject[];
             return res;
-        } catch (error) {
-            if (error.code === "0000") throw error;
-            throw new Error(`Server responded with an error:\n\n${error.stack}`);
+        } catch (error: any) {
+            if (error?.code === "0000") throw error;
+            throw new Error(`Server responded with an error:\n\n${error?.stack}`);
         }
     }
 
     /** @internal */
     async __requestPingData(categoryId: number): Promise<GlobalTypes.PingCityObject[]> {
         try {
-            let fetchreq = await fetch(this.__endpoints.pingCityReport, this.__generateConfig("pingCityReport", categoryId)); // tslint:disable-line
+            let fetchreq = await this.__fetch(this.__endpoints.pingCityReport, this.__generateConfig("pingCityReport", categoryId));
             let req: RawDataObject = await fetchreq.json();
             if (req.ServiceResult.Code !== 0) throw new this.errorHandler(req.ServiceResult.Code.toString(), req.ServiceResult.Message);
             let res = req.Result as GlobalTypes.PingCityObject[];
             return res;
-        } catch (error) {
-            if (error.code === "0000") throw error;
-            throw new Error(`Server responded with an error:\n\n${error.stack}`);
+        } catch (error: any) {
+            if (error?.code === "0000") throw error;
+            throw new Error(`Server responded with an error:\n\n${error?.stack}`);
         }
     }
 }

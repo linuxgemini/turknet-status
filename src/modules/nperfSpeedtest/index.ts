@@ -38,7 +38,7 @@ export class nperfSpeedtest {
             };
 
             return returnObj;
-        } catch (error) {
+        } catch (error: any) {
             return error;
         }
     }
